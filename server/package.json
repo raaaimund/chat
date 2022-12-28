@@ -1,0 +1,24 @@
+{
+  "name": "chat-server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "WebRTC signaling server using peer",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "test",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "webrtc",
+    "signaling",
+    "peer"
+  ],
+  "author": "Raimund Rittnauer",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20",
+    "peer": "^0.6.1"
+  }
+}
