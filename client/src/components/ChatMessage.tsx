@@ -8,7 +8,7 @@ export default function ChatMessage(props: ChatMessageProps) {
     const messageBackgroundColor = props.isFromMe ? "bg-pink-500" : "bg-blue-500";
 
     return (
-        <div className={`${textPosition} p-2`}>
+        <div className={`${textPosition} p-2 mr-1`}>
             <span className={`${messageBackgroundColor} text-white p-2 rounded-2xl`}>
                 {props.text}
             </span>
