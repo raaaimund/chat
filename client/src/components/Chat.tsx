@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import Peer, {DataConnection} from "peerjs";
 import NotConnected from "./NotConnected";
 import Connected from "./Connected";
+import {useRouter} from "next/router";
 
 export default function Chat() {
     const [messages, setMessages] = useState<Message[]>([])
@@ -9,6 +10,12 @@ export default function Chat() {
     const [theirPeerId, setTheirPeerId] = useState<string>("")
     const myPeer = useRef(undefined as Peer | undefined)
     const connection = useRef(undefined as DataConnection | undefined)
+    const router = useRouter()
+
+    function getTheirPeerIdFromUrl(path: string) {
+        const pathParts = path.split("#")
+        return pathParts.length > 1 ? pathParts.pop() : undefined
+    }
 
     useEffect(() => {
         const connectToSignalingServer = async () => {
@@ -21,9 +28,14 @@ export default function Chat() {
                 })
                 p.on('open', id => {
                     setMyPeerId(id);
+                    const theirPeerIdFromUrl = getTheirPeerIdFromUrl(router.asPath)
+                    if (theirPeerIdFromUrl) {
+                        handleConnectToPeer(theirPeerIdFromUrl)
+                    }
                 })
                 p.on('connection', connectionToOtherPeer => {
                     connectionToOtherPeer.on('data', handleMessageReceived);
+                    connectionToOtherPeer.on('close', cleanUp)
                     setTheirPeerId(connectionToOtherPeer.peer)
                     connection.current = connectionToOtherPeer;
                 })
@@ -32,14 +44,18 @@ export default function Chat() {
         }
         connectToSignalingServer()
         return () => {
-            myPeer.current?.destroy();
-            myPeer.current = undefined;
-            connection.current?.close()
-            connection.current = undefined;
-            setMessages([]);
-            setTheirPeerId("");
+            cleanUp()
         }
     }, [])
+
+    function cleanUp() {
+        myPeer.current?.destroy();
+        myPeer.current = undefined;
+        connection.current?.close()
+        connection.current = undefined;
+        setMessages([]);
+        setTheirPeerId("");
+    }
 
     function handleSendMessage(text: string) {
         const messageToSend: Message = {text: text, from: "them"}
@@ -52,6 +68,7 @@ export default function Chat() {
         const conn = myPeer.current?.connect(peerId);
         conn?.on('open', () => {
             conn?.on('data', handleMessageReceived);
+            conn?.on('close', cleanUp)
             setTheirPeerId(conn.peer)
         })
         connection.current = conn;

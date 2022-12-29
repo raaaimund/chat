@@ -1,5 +1,5 @@
 import Button from "./Button";
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 
 interface NotConnectedProps {
     myPeerId: string
@@ -8,10 +8,15 @@ interface NotConnectedProps {
 
 export default function NotConnected(props: NotConnectedProps) {
     const peerIdInput = useRef({} as HTMLInputElement)
+    const linkToConnectToPeer = useRef("")
+
+    useEffect(() => {
+        linkToConnectToPeer.current = `${window.location.origin}#${props.myPeerId}`
+    }, [])
 
     function handleMyPeerIdClicked() {
         // when deploying as static site, needs https to use navigator.clipboard
-        navigator.clipboard.writeText(props.myPeerId);
+        navigator.clipboard.writeText(linkToConnectToPeer.current);
     }
 
     function handleConnectToPeer(e: React.FormEvent<HTMLFormElement>) {
