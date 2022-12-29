@@ -14,6 +14,7 @@ const sslConfig = isSsl ? {
     cert: fs.readFileSync(sslCertFilePath)
 } : undefined
 const app = express()
+app.use(cors())
 const server = http.createServer(app);
 const peerServer = ExpressPeerServer(server, {
     path: '/chat',
@@ -28,10 +29,7 @@ peerServer.on('connection', (client) => {
 peerServer.on('disconnect', (client) => {
     console.log('client disconnected', client.id)
 })
-
-app.use(cors())
 app.use('/', peerServer);
-
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

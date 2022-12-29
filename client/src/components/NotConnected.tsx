@@ -10,6 +10,7 @@ export default function NotConnected(props: NotConnectedProps) {
     const peerIdInput = useRef({} as HTMLInputElement)
 
     function handleMyPeerIdClicked() {
+        // when deploying as static site, needs https to use navigator.clipboard
         navigator.clipboard.writeText(props.myPeerId);
     }
 
@@ -20,20 +21,21 @@ export default function NotConnected(props: NotConnectedProps) {
     }
 
     return (
-        <div className={"flex flex-col justify-center gap-10 h-full"}>
+        <div className={"flex flex-col justify-center gap-20 max-sm:ml-5 max-sm:mr-5 h-full"}>
             <div className={"text-center"}>
                 <h1 className={"text-2xl"}>Your Id</h1>
                 <h2 className={"text-xl hover:cursor-pointer hover:bg-pink-600 bg-pink-500 text-white p-1 rounded-xl active:bg-pink-200 inline-block"}
                     onClick={handleMyPeerIdClicked}>{props.myPeerId}</h2>
             </div>
-            <div className={"text-center"}>
-
-                <form onSubmit={handleConnectToPeer}>
-                    <input type={"text"} ref={peerIdInput} size={36}
-                           className={"border border-pink-500 p-2 outline-pink-500"}/>
+            <form onSubmit={handleConnectToPeer} className={"flex max-sm:flex-col max-sm:gap-5 justify-center"}>
+                <div className={"max-sm:grow"}>
+                    <input type={"text"} ref={peerIdInput}
+                           className={"border border-pink-500 p-2 outline-pink-500 w-96 max-sm:w-full"}/>
+                </div>
+                <div className={"max-sm:grow"}>
                     <Button type={"submit"}>Connect</Button>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     )
 }

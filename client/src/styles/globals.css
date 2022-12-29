@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #__next, main {
-    @apply h-full;
+html, body, main, #__next {
+    @apply h-full
 }

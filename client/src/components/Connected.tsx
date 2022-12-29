@@ -15,18 +15,21 @@ export default function Connected(props: ConnectedProps) {
         const text = messageInputRef.current.value
         props.handleSendMessage(text)
         messageInputRef.current.value = ""
+        messageInputRef.current.focus()
     }
 
     return (
-        <div className={"flex flex-col justify-end h-screen p-5 gap-1"}>
-            <div className={"overflow-y-auto pb-5 scrollbar scrollbar-thin scrollbar-track-pink-100 scrollbar-thumb-pink-500"} ref={messageContainerRef}>
+        <div className={"flex flex-col justify-end h-full"}>
+            <div
+                className={"overflow-y-auto pb-24 scrollbar scrollbar-thin scrollbar-track-pink-100 scrollbar-thumb-pink-500 scroll-smooth"}
+                ref={messageContainerRef}>
                 {props.messages.map((message, index) => (
                     <ChatMessage key={index} isFromMe={message.from === "me"} text={message.text}/>
                 ))}
             </div>
-            <form onSubmit={handleSendMessage}>
+            <form onSubmit={handleSendMessage} className={"fixed w-full bottom-0 p-5 border-t-pink-500 border-t bg-white bg-opacity-90"}>
                 <div className={"flex"}>
-                    <div className={"flex-1"}>
+                    <div className={"grow"}>
                         <input type={"text"} ref={messageInputRef}
                                className={"border border-pink-500 outline-pink-500 p-2 w-full"}/>
                     </div>
