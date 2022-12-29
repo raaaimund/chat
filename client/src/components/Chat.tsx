@@ -15,9 +15,9 @@ export default function Chat() {
             if (!myPeer.current) {
                 const Peer = (await import('peerjs')).default;
                 const p = new Peer({
-                    host: process.env.NEXT_PUBLIC_SIGNAL_SERVER_HOSTNAME as string || "localhost",
-                    port: parseInt(process.env.NEXT_PUBLIC_SIGNAL_SERVER_PORT as string) || 9000,
-                    path: process.env.NEXT_PUBLIC_SIGNAL_SERVER_ENDPOINT as string || "/chat"
+                    host: process.env.NEXT_PUBLIC_SIGNALING_SERVER_HOSTNAME as string || "localhost",
+                    port: parseInt(process.env.NEXT_PUBLIC_SIGNALING_SERVER_PORT as string) || 9000,
+                    path: process.env.NEXT_PUBLIC_SIGNALING_SERVER_ENDPOINT as string || "/chat"
                 })
                 p.on('open', id => {
                     setMyPeerId(id);
