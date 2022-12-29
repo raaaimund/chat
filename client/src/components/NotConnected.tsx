@@ -12,7 +12,7 @@ export default function NotConnected(props: NotConnectedProps) {
 
     useEffect(() => {
         linkToConnectToPeer.current = `${window.location.origin}#${props.myPeerId}`
-    }, [])
+    }, [props.myPeerId])
 
     function handleMyPeerIdClicked() {
         // when deploying as static site, needs https to use navigator.clipboard
