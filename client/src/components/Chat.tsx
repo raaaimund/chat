@@ -18,16 +18,16 @@ export default function Chat() {
     }
 
     useEffect(() => {
-        const connectToSignalingServer = async () => {
+        const prepareChatPeer = async () => {
             if (!myPeer.current) {
                 // https://nextjs.org/docs/advanced-features/dynamic-import
-                const chatPeer = (await import('../rtc/ChatPeer')).default;
+                const chatPeer = (await import('../rtc/createChatPeer')).default;
                 chatPeer.on('open', handleConnectionToSignalingServerOpen)
                 chatPeer.on('connection', handleNewDataConnection)
                 myPeer.current = chatPeer;
             }
         }
-        connectToSignalingServer()
+        prepareChatPeer()
         return () => {
             cleanUp()
         }
@@ -78,7 +78,6 @@ export default function Chat() {
     }
 
     function handleMessageReceived(message: any) {
-        console.log("message received")
         setMessages(currentMessages => [...currentMessages, message]);
     }
 

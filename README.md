@@ -60,4 +60,4 @@ project [Twemoji](https://twemoji.twitter.com/).
 - https://developer.mozilla.org/en-US/docs/Glossary/Symmetric-key_cryptography
 - https://en.wikipedia.org/wiki/Authenticated_encryption
 - https://blog.excalidraw.com/end-to-end-encryption/
-- 
+- https://braydoncoyer.dev/blog/tailwind-gradients-how-to-make-a-glowing-gradient-background
