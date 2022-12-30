@@ -27,6 +27,27 @@ npm -w client run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Architecture
+
+    C4Dynamic
+    title WebRTC Chat application without a signaling server
+    Container(host, "Static file host", "nginx", "Provides the static generated files for the chat client")
+    Container_Boundary(browser1, "Web browser") {
+        Container(client1, "Chat client", "javascript", "example.com/")
+    }
+    Container_Boundary(browser2, "Web browser") {
+        Container(client2, "Chat client", "javascript", "example.com/#client-1-id")
+    }
+    Rel(host, client1, "serves files")
+    Rel(host, client2, "serves files")
+    Rel(client2, client1, "connects via client-1-d provided in url")
+    Rel(client1, client2, "answers connection")
+    
+    UpdateRelStyle(host, client1, $textColor="black", $offsetY="-40", $offsetX="10")
+    UpdateRelStyle(host, client2, $textColor="black", $offsetY="-40", $offsetX="-50")
+    UpdateRelStyle(client2, client1, $textColor="black", $offsetY="-20", $offsetX="-90")
+    UpdateRelStyle(client1, client2, $textColor="black", $offsetY="20", $offsetX="-60")
+
 ## favicon.ico
 
 The emoji graphics ([favicon.ico](client/public/favicon.ico)) are from the open source
