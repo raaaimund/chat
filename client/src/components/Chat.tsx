@@ -85,7 +85,7 @@ export default function Chat() {
     return (
         theirPeerId
             ? <Connected messages={messages} handleSendMessage={handleSendMessage}/>
-            : <NotConnected myPeerId={myPeerId} handleConnectToPeer={handleConnectToPeer}/>
+            : <NotConnected myPeerId={myPeerId}/>
     )
 }
 

@@ -27,7 +27,7 @@ export default function NotConnected(props: NotConnectedProps) {
                         className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-pink-500 rounded-lg blur opacity-25 group-hover:opacity-100 group-active:opacity-50 transition duration-1000 group-hover:duration-200 group-active:duration-100"></div>
                     <div
                         className="relative px-7 py-6 rounded-lg leading-none text-center bg-white text-pink-500">
-                        <button className="text-xl">
+                        <button className="text-2xl">
                             {props.myPeerId}
                         </button>
                     </div>
