@@ -38,6 +38,7 @@ export default function Chat() {
                     connectionToOtherPeer.on('close', cleanUp)
                     setTheirPeerId(connectionToOtherPeer.peer)
                     connection.current = connectionToOtherPeer;
+                    connection.current.peerConnection.addEventListener("iceconnectionstatechange", handleIceConnectionStateChange)
                 })
                 myPeer.current = p;
             }
@@ -69,9 +70,17 @@ export default function Chat() {
         conn?.on('open', () => {
             conn?.on('data', handleMessageReceived);
             conn?.on('close', cleanUp)
+            conn?.peerConnection.addEventListener("iceconnectionstatechange", handleIceConnectionStateChange)
             setTheirPeerId(conn.peer)
         })
         connection.current = conn;
+    }
+
+    function handleIceConnectionStateChange(e: Event) {
+        const targetConnection = e.currentTarget as RTCPeerConnection
+        if (targetConnection.iceConnectionState === "failed" || targetConnection.iceConnectionState === "disconnected") {
+            cleanUp()
+        }
     }
 
     function handleMessageReceived(message: any) {
