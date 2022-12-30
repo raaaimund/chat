@@ -1,13 +1,10 @@
-import Button from "./Button";
 import {useEffect, useRef} from "react";
 
 interface NotConnectedProps {
     myPeerId: string
-    handleConnectToPeer: (peerId: string) => void
 }
 
 export default function NotConnected(props: NotConnectedProps) {
-    const peerIdInput = useRef({} as HTMLInputElement)
     const linkToConnectToPeer = useRef("")
 
     useEffect(() => {
@@ -19,28 +16,23 @@ export default function NotConnected(props: NotConnectedProps) {
         navigator.clipboard.writeText(linkToConnectToPeer.current);
     }
 
-    function handleConnectToPeer(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault()
-        const peerId = peerIdInput.current.value
-        props.handleConnectToPeer(peerId)
-    }
-
     return (
-        <div className={"flex flex-col justify-center gap-20 max-sm:ml-5 max-sm:mr-5 h-full"}>
-            <div className={"text-center"}>
-                <h1 className={"text-2xl"}>Your Id</h1>
-                <h2 className={"text-xl hover:cursor-pointer hover:bg-pink-600 bg-pink-500 text-white p-1 rounded-xl active:bg-pink-200 inline-block"}
-                    onClick={handleMyPeerIdClicked}>{props.myPeerId}</h2>
+        <>
+            <div className={"flex flex-col justify-center items-center gap-20 max-sm:ml-5 max-sm:mr-5 h-full"}>
+                <div>
+                    <h1 className={"text-6xl font-light text-pink-500"}>Your Id</h1>
+                </div>
+                <div className="relative group max-sm:w-full hover:cursor-pointer" onClick={handleMyPeerIdClicked}>
+                    <div
+                        className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-pink-500 rounded-lg blur opacity-25 group-hover:opacity-100 group-active:opacity-50 transition duration-1000 group-hover:duration-200 group-active:duration-100"></div>
+                    <div
+                        className="relative px-7 py-6 rounded-lg leading-none text-center bg-white text-pink-500">
+                        <button className="text-xl">
+                            {props.myPeerId}
+                        </button>
+                    </div>
+                </div>
             </div>
-            <form onSubmit={handleConnectToPeer} className={"flex max-sm:flex-col max-sm:gap-5 justify-center"}>
-                <div className={"max-sm:grow"}>
-                    <input type={"text"} ref={peerIdInput}
-                           className={"border border-pink-500 p-2 outline-pink-500 w-96 max-sm:w-full"}/>
-                </div>
-                <div className={"max-sm:grow"}>
-                    <Button type={"submit"}>Connect</Button>
-                </div>
-            </form>
-        </div>
+        </>
     )
 }
