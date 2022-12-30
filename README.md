@@ -29,6 +29,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Architecture
 
+```mermaid
     C4Dynamic
     title WebRTC Chat application without a signaling server
     Container(host, "Static file host", "nginx", "Provides the static generated files for the chat client")
@@ -47,6 +48,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
     UpdateRelStyle(host, client2, $textColor="black", $offsetY="-40", $offsetX="-50")
     UpdateRelStyle(client2, client1, $textColor="black", $offsetY="-20", $offsetX="-90")
     UpdateRelStyle(client1, client2, $textColor="black", $offsetY="20", $offsetX="-60")
+```
 
 ## favicon.ico
 
