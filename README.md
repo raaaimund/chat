@@ -61,3 +61,5 @@ project [Twemoji](https://twemoji.twitter.com/).
 - https://en.wikipedia.org/wiki/Authenticated_encryption
 - https://blog.excalidraw.com/end-to-end-encryption/
 - https://braydoncoyer.dev/blog/tailwind-gradients-how-to-make-a-glowing-gradient-background
+- https://github.com/vercel/next.js/blob/canary/examples/progressive-web-app/package.json
+- https://www.npmjs.com/package/next-pwa
