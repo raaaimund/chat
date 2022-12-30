@@ -11,6 +11,8 @@ services:
         - SIGNALING_SERVER_PORT=${NEXT_PUBLIC_SIGNALING_SERVER_PORT}
         - SIGNALING_SERVER_ENDPOINT=${NEXT_PUBLIC_SIGNALING_SERVER_ENDPOINT}
         - SIGNALING_SERVER_ENABLED=${NEXT_PUBLIC_SIGNALING_SERVER_ENABLED}
+        - PORT=${PORT}
+        - NODE_ENV=production
     ports:
       - "${PORT}:${PORT}"
     environment:
@@ -25,3 +27,4 @@ services:
       - "9000:9000"
     environment:
       - PORT=9000
+      - NODE_ENV=production

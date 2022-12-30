@@ -7,7 +7,7 @@ RUN npm install
 # Rebuild the source code only when needed
 FROM node:19-alpine AS runner
 WORKDIR /server
-ENV NODE_ENV production
+ENV NODE_ENV development
 ENV PORT 9000
 COPY --from=dependencies /server/node_modules ./node_modules
 COPY . .
