@@ -20,27 +20,11 @@ export default function Chat() {
     useEffect(() => {
         const connectToSignalingServer = async () => {
             if (!myPeer.current) {
-                const Peer = (await import('peerjs')).default;
-                const p = new Peer({
-                    host: process.env.NEXT_PUBLIC_SIGNALING_SERVER_HOSTNAME as string || "localhost",
-                    port: parseInt(process.env.NEXT_PUBLIC_SIGNALING_SERVER_PORT as string) || 9000,
-                    path: process.env.NEXT_PUBLIC_SIGNALING_SERVER_ENDPOINT as string || "/chat"
-                })
-                p.on('open', id => {
-                    setMyPeerId(id);
-                    const theirPeerIdFromUrl = getTheirPeerIdFromUrl(router.asPath)
-                    if (theirPeerIdFromUrl) {
-                        handleConnectToPeer(theirPeerIdFromUrl)
-                    }
-                })
-                p.on('connection', connectionToOtherPeer => {
-                    connectionToOtherPeer.on('data', handleMessageReceived);
-                    connectionToOtherPeer.on('close', cleanUp)
-                    setTheirPeerId(connectionToOtherPeer.peer)
-                    connection.current = connectionToOtherPeer;
-                    connection.current.peerConnection.addEventListener("iceconnectionstatechange", handleIceConnectionStateChange)
-                })
-                myPeer.current = p;
+                // https://nextjs.org/docs/advanced-features/dynamic-import
+                const chatPeer = (await import('../rtc/ChatPeer')).default;
+                chatPeer.on('open', handleConnectionToSignalingServerOpen)
+                chatPeer.on('connection', handleNewDataConnection)
+                myPeer.current = chatPeer;
             }
         }
         connectToSignalingServer()
@@ -49,13 +33,19 @@ export default function Chat() {
         }
     }, [])
 
+    function handleConnectionToSignalingServerOpen(myPeerId: string) {
+        setMyPeerId(myPeerId);
+        const theirPeerIdFromUrl = getTheirPeerIdFromUrl(router.asPath)
+        if (theirPeerIdFromUrl && !connection.current) {
+            handleConnectToPeer(theirPeerIdFromUrl)
+        }
+    }
+
     function cleanUp() {
-        myPeer.current?.destroy();
-        myPeer.current = undefined;
         connection.current?.close()
-        connection.current = undefined;
-        setMessages([]);
-        setTheirPeerId("");
+        connection.current = undefined
+        setMessages([])
+        setTheirPeerId("")
     }
 
     function handleSendMessage(text: string) {
@@ -66,14 +56,18 @@ export default function Chat() {
     }
 
     function handleConnectToPeer(peerId: string) {
-        const conn = myPeer.current?.connect(peerId);
-        conn?.on('open', () => {
-            conn?.on('data', handleMessageReceived);
-            conn?.on('close', cleanUp)
-            conn?.peerConnection.addEventListener("iceconnectionstatechange", handleIceConnectionStateChange)
-            setTheirPeerId(conn.peer)
+        const newConnection = myPeer.current?.connect(peerId);
+        newConnection?.on('open', () => {
+            handleNewDataConnection(newConnection)
         })
-        connection.current = conn;
+    }
+
+    function handleNewDataConnection(newConnection: DataConnection) {
+        newConnection.on('data', handleMessageReceived);
+        newConnection.on('close', cleanUp)
+        newConnection.peerConnection.addEventListener("iceconnectionstatechange", handleIceConnectionStateChange)
+        setTheirPeerId(newConnection.peer)
+        connection.current = newConnection;
     }
 
     function handleIceConnectionStateChange(e: Event) {
@@ -84,6 +78,7 @@ export default function Chat() {
     }
 
     function handleMessageReceived(message: any) {
+        console.log("message received")
         setMessages(currentMessages => [...currentMessages, message]);
     }
 
