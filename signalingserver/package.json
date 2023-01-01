@@ -1,5 +1,5 @@
 {
-  "name": "chat-server",
+  "name": "signalingserver",
   "private": true,
   "version": "1.0.0",
   "description": "WebRTC signaling server using peer",

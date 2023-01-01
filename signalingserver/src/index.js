@@ -6,10 +6,10 @@ const http = require("http");
 const {ExpressPeerServer} = require('peer');
 
 const port = process.env.PORT || 9000
-const isProxied = process.env.PROXIED || false
-const isSsl = process.env.SSL || false
-const sslKeyFilePath = process.env.SSL_KEY || undefined
-const sslCertFilePath = process.env.SSL_CERT || undefined
+const isBehindProxy = process.env.BEHIND_PROXY || false
+const isSsl = process.env.SSL_ENABLE || false
+const sslKeyFilePath = process.env.SSL_KEY_PATH || undefined
+const sslCertFilePath = process.env.SSL_CERT_PATH || undefined
 const sslConfig = isSsl ? {
     key: fs.readFileSync(sslKeyFilePath),
     cert: fs.readFileSync(sslCertFilePath)
@@ -19,7 +19,7 @@ const server = http.createServer(app);
 const peerServer = ExpressPeerServer(server, {
     path: '/chat',
     allow_discovery: true,
-    proxied: isProxied,
+    proxied: isBehindProxy,
     ssl: sslConfig
 });
 
