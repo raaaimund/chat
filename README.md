@@ -1,6 +1,3 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped
-with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 # chat
 
 This project is a playground for WebRTC. For using WebRTC the [peer](https://github.com/peers/peerjs-server) package is
@@ -9,55 +6,104 @@ the [client](client) project. The chat client is also runnable without the [sign
 You can configure the usage of the [signalingserver](signalingserver) by setting environment variables for building the
 client.
 
-## Getting Started
+## WebRTC
 
-First, install packages:
+A really rough example on how WebRTC works. Or at least how I understood. Mostly I used the [Mozilla
+documentation](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API) on WebRTC API
+and also the test cases of the [chatpeer](chatpeer) project. They also got a nice example called
+[Simple RTCDatachannel sample](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Simple_RTCDataChannel_sample)
+that gives a great overview on how to set up everyting (at least in a local environment) to use
+the [RTCDataChannel](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) for sending messages from one peer
+to another.
 
-```bash
-npm install
+If we want to connect two peers we will face two problems in the beginning.
+
+#### 1. Each peer needs to know the address (or a way to connect to) the other peer
+
+If the two peers are not on the same local network, we will need some way to determine the address of the peers. Since
+mostly their IP address will be a private one and not visible to the outside because of the use
+of [NAT](https://en.wikipedia.org/wiki/Network_address_translation) (translates the private IP addresses and
+ports on a LAN to public ones).
+
+For this purpose ICE, STUN, and TURN servers are used.
+
+STUN (Session Traversal Utilities for NAT, [RFC5389](https://www.rfc-editor.org/info/rfc5389))
+This protocol helps by finding the address of a peer behind a NAT possible through its public IP address and port. After
+exchanging this information the peers can begin connecting and to send data directly to each other without the need of
+another server.
+
+TURN (Traversal Using Relays around NAT), [RFC5766](https://www.rfc-editor.org/info/rfc5766))
+TURN will enable peers to exchange data without a direct connection (relaying).
+This option will be necessary when a direct client-to-client connection cannot be constructed.
+
+ICE means Interactive Connectivity Establishment (see RFC5245)
+The ICE protocols helps to decide if either STUN or TURN is used for detecting the address of the peers.
+This information (address of a peer and available ice candidates) must be transmitted using a so-called signaling
+server.
+
+#### 2. Each peer has to share this information with the other peer before establishing a connection
+
+Signaling servers are used for indirect exchange of data between two peers. The server has to be accessible from both
+peers. With WebRTC the created offer, answer and ice candidates have to be sent through the signaling server.
+
+```mermaid
+sequenceDiagram
+    title Creating a connection using WebRTC
+    Alice->>Alice: create offer
+    Alice->>Alice: set offer as local description
+    Alice->>Signaling: send offer
+    Signaling->>John: send offer
+    John->>John: set offer as remote description
+    John->>John: create answer
+    John->>John: set answer as local description
+    John->>Signaling: send answer
+    Signaling->>Alice: send answer
+    Alice->>Alice: set answer as remote description
+    Alice->>John: can send messages directly
+    John->>Alice: can send messages directly
 ```
 
-### Signaling Server
+Further resources:
 
-Then, run the signaling server:
+- https://web.dev/webrtc-datachannels/
+
+## chatpeer
+
+The [chatpeer](chatpeer) project is for understanding WebRTC API using test cases. The tests are no real unit tests, but
+only for understanding and playing around with the WebRTC API. The goal is to send messages between two peers without
+the need of a [signalingserver](signalingserver) and full control over what is exposed from the client(s).
+
+The idea is that in the end one peer creates some sort of listener for messages and an offer with everything included to
+send messages to this peer's listener. The offer gets sent to the other peer (e.g. someone copies a link with the offer
+as a base64 hash in the url /#offerasbase64hash) and uses the offer to create an answer including the description of the
+remote peer. The answer gets sent back to the first peer's listener and then a WebRTC connection can be established. In
+the end it is also a signaling server, but created by the first peer and without the need of a server in between.
+
+To run tests for the [chatpeer](chatpeer) project, run:
 
 ```bash
-npm -w signalingserver run dev
+yarn workspace chatpeer test
 ```
 
-### Next.js client
+Further resources:
 
-Finally, run the Next.js client:
+- https://bford.info/pub/net/p2pnat/
+
+## human-signaling-client
+
+The [human-signaling-client](human-signaling-client) project is for understanding the process of connecting two peers
+via WebRTC where the user acts as the signaling server.
 
 ```bash
-npm -w client run dev
+yarn workspace human-signaling-client dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the chat client
-and [http://localhost:9000](http://localhost:9000) to see the signalingserver.
 
 ## client
 
 The client is a [Next.js](https://nextjs.org/) application which generates static HTML. The environment variables
-can be set in the [client/.env](client/.env) file.
-
-```mermaid
-    C4Dynamic
-    title WebRTC Chat application without a signaling server
-    Deployment_Node(static_file_host, "Web server", "nginx") {
-        Container(host, "Static files", "nginx", "Static generated files for the chat client")
-    }
-    Deployment_Node(browser1, "Client 1", "Web browser") {
-        Container(client1, "Chat client", "javascript", "client-1-id")
-    }
-    Deployment_Node(browser2, "Client 2", "Web browser") {
-        Container(client2, "Chat client", "javascript", "client-2-id")
-    }
-    Rel(host, client1, "serves files")
-    Rel(host, client2, "serves files")
-    UpdateRelStyle(host, client1, $textColor="black", $offsetY="-40", $offsetX="-40")
-    UpdateRelStyle(host, client2, $textColor="black", $offsetY="-40", $offsetX="-50")
-```
+can be set in the [client/.env](client/.env) file. This project uses [peerjs](https://peerjs.com/) as a wrapper for
+the WebRTC API. The provided [signalingserver from peerjs - https://0.peerjs.com](https://0.peerjs.com) is used by
+default.
 
 ## signalingserver
 
@@ -65,6 +111,32 @@ The signalingserver is a [Node.js express](https://expressjs.com/) application w
 for [signaling](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling#the_signaling_server)
 between the clients.
 
+## Run client and signalingserver
+
+First, install packages:
+
+```bash
+yarn install
+```
+
+### Signaling Server
+
+Then, run the signaling server:
+
+```bash
+yarn workspace signalingserver run dev
+```
+
+### Next.js client
+
+Finally, run the Next.js client:
+
+```bash
+yarn workspace client run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the chat client
+and [http://localhost:9000](http://localhost:9000) to see the signalingserver.
 
 ## Docker
 
@@ -189,3 +261,6 @@ project [Twemoji](https://twemoji.twitter.com/).
 - https://braydoncoyer.dev/blog/tailwind-gradients-how-to-make-a-glowing-gradient-background
 - https://github.com/vercel/next.js/blob/canary/examples/progressive-web-app/package.json
 - https://www.npmjs.com/package/next-pwa
+- https://web.dev/webrtc-infrastructure/
+- https://mac-blog.org.ua/webrtc-one-to-one-without-signaling-server
+- https://temasys.io/guides/developers/webrtc-ice-sorcery/

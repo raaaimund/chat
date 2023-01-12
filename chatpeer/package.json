@@ -1,0 +1,35 @@
+{
+  "name": "chatpeer",
+  "version": "1.0.0",
+  "description": "Send messages using WebRTC",
+  "scripts": {
+    "test": "karma start --browsers chrome_with_fake_device",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raaaimund/chat.git"
+  },
+  "keywords": [
+    "webrtc"
+  ],
+  "author": "Raimund Rittnauer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raaaimund/chat/issues"
+  },
+  "homepage": "https://github.com/raaaimund/chat#readme",
+  "devDependencies": {
+    "@types/jasmine": "^4.3.1",
+    "babel-preset-env": "^1.7.0",
+    "jasmine-core": "^4.5.0",
+    "karma": "^6.4.1",
+    "karma-chrome-launcher": "^3.1.1",
+    "karma-firefox-launcher": "^2.1.2",
+    "karma-jasmine": "^5.1.0",
+    "karma-typescript": "^5.5.3",
+    "karma-typescript-es6-transform": "^5.5.3",
+    "puppeteer": "^19.4.1",
+    "typescript": "^4.9.4"
+  }
+}

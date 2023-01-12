@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "lib": ["esnext", "DOM"],
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "rootDir": "./src",
+    "outDir": "./out",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["./src"]
+}
