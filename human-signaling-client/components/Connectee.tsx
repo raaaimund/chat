@@ -10,6 +10,7 @@ export default function Connectee(props: ConnecteeProps) {
         encodedRemotePeerAddress: props.encodedRemoteAddress
     })
     const isChatReady = connectionState === "connected" && dataChannelState === "open"
+    const encodedLocalAddress = encodePeerAddress(localAddress)
 
     return (
         isChatReady
@@ -27,8 +28,10 @@ export default function Connectee(props: ConnecteeProps) {
                                 </div>
                             </Glowing>
                             :
-                            <InviteLink text={"Copy answer"} loadingText={"Generating answer ..."}
-                                        link={encodePeerAddress(localAddress)}/>
+                            <InviteLink text={"Copy answer"}
+                                        loadingText={"Generating answer ..."}
+                                        encodedPeerAddress={encodedLocalAddress}
+                                        includeDomain={false}/>
                     }
                 </div>
                 <div className={"flex flex-row justify-center"}>
